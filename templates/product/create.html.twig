@@ -3,9 +3,10 @@
 {% block body %}
     <h1>Formulaire d'ajout</h1>
 
-    <form method="post">
-        <input type="text" name="astre">
-        <input type="submit">
-    </form>
+    {{ form_start(formProduct) }}
+    {{ form_widget(formProduct) }}
+    <input type = "submit" value="Créer le produit">
+    {{ form_end(formProduct) }}
+
 {% endblock %}
 

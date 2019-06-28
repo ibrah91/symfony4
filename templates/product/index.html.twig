@@ -14,8 +14,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description | slice(0,100) }}</p>
-                            <a href="{{ path('app_product_show', {slug: product.slug}) }}"
-                               class="card-link btn btn-outline-info">Détail</a>
+                            <a href="{{ path('app_product_show', {slug: product.slug}) }}" class="card-link btn btn-outline-info">Détail</a>
                         </div>
                     </div>
                 </div>

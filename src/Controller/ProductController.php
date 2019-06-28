@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Form\ProductType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,35 +40,29 @@ class ProductController extends AbstractController
      */
     public function create(Request $requestHTTP): Response
     {
-        //Récupération d'une catégorie
-        $category = $this->getDoctrine()
-            ->getRepository(Category::class)
-            ->find(1)
-            ;
-        // Récupération des POSTS
-        dump($requestHTTP->request);
-        //Création et remplissage du produit
+        //Récupération du formulaire
         $product = new Product();
-            $product->setName('Ventilateur')
-                ->setDescription('pour faire du froid')
-                ->setImageName('ventilateur.jpg')
-                ->setIsPublished(true)
-                ->setPrice(15.99)
-                ->setCategory($category)
-                ;
+        $formProduct = $this->createForm(ProductType::class,$product);
 
+        //On envoi les donnees postées au formulaire
+        $formProduct->handleRequest($requestHTTP);
 
+        //On vérifie que le formulaire est soumis et valide
+        if($formProduct->isSubmitted() && $formProduct->isValid()){
+            $manager = $this->getDoctrine()->getManager();
+            $manager -> persist($product) ;
+            $manager ->flush();
+        }
+
+        /*
+         On sauvegarde le produi  en BDD grâce au manager
         $manager = $this->getDoctrine()->getManager();
         $manager -> persist($product) ;
         $manager ->flush();
-
-
-        //On sauvegarde le en BDD grâce au manager
-
-
-
-
-        return $this->render('product/create.html.twig');
+        */
+        return $this->render('product/create.html.twig',[
+            'formProduct' => $formProduct->createView()
+            ]);
     }
 
 
@@ -89,7 +84,7 @@ class ProductController extends AbstractController
         ]);
         // Si on a pas de produit -> page 404
         if (!$product) {
-            throw $this->createNotFoundException('Produit non-trouvé !');
+            throw $this->createNotFoundException('Produit non-trouvé ou non disponible !');
         }
         // Renvoi du produit à la vue
         return $this->render('product/show.html.twig', [
